@@ -1,27 +1,25 @@
 FROM python:3-alpine
 
-RUN apk update \
-    && apk add --no-cache bash openjdk8 subversion curl wget coreutils tini sudo
-
-# openssh  git
-
 ## install ansible
 ENV ANSIBLE_VERSION=2.7.6
 
 RUN set -xe \
     && echo "****** Install system dependencies ******" \
-    && apk add --no-cache --progress python py-pip openssl \
-		ca-certificates git openssh sshpass \
-	&& apk --update add --virtual build-dependencies \
-		python-dev libffi-dev openssl-dev build-base \
-	\
-	&& echo "****** Install ansible and python dependencies ******" \
+    && apk update \
+    && apk add --no-cache bash --progress openjdk8 subversion \
+        curl wget coreutils tini sudo \
+        python py-pip openssl \
+        ca-certificates git openssh sshpass \
+    && apk --update add --virtual build-dependencies \
+        python-dev libffi-dev openssl-dev build-base \
+    \
+    && echo "****** Install ansible and python dependencies ******" \
     && pip install --upgrade pip \
-	&& pip install ansible==${ANSIBLE_VERSION} boto boto3 \
+    && pip install ansible==${ANSIBLE_VERSION} boto boto3 \
     \
     && echo "****** Remove unused system librabies ******" \
-	&& apk del build-dependencies \
-	&& rm -rf /var/cache/apk/*
+    && apk del build-dependencies \
+    && rm -rf /var/cache/apk/*
 
 RUN set -xe \
     && mkdir -p /etc/ansible \
@@ -38,12 +36,16 @@ ARG JENKINS_AGENT_HOME=/home/${user}
 
 ENV JENKINS_AGENT_HOME ${JENKINS_AGENT_HOME}
 
-RUN addgroup -g ${gid} ${group} \
-	&& adduser -h "${JENKINS_AGENT_HOME}" -u "${uid}" -G "${group}" -s /bin/bash -D "${user}"\
-	&& passwd -u jenkins
+RUN set -xe \
+    && echo "****** Add jenkins user and goupe ******" \
+    && addgroup -g ${gid} ${group} \
+    && adduser -h "${JENKINS_AGENT_HOME}" -u "${uid}" -G "${group}" -s /bin/bash -D "${user}"\
+    && passwd -u jenkins &&  mkdir ${JENKINS_AGENT_HOME}/.ssh
 
 # setup SSH server
-RUN sed -i /etc/ssh/sshd_config \
+RUN set -xe \
+    && echo "****** setup SSH server ******" \
+    && sed -i /etc/ssh/sshd_config \
         -e 's/#PermitRootLogin.*/PermitRootLogin no/' \
         -e 's/#RSAAuthentication.*/RSAAuthentication yes/'  \
         -e 's/#PasswordAuthentication.*/PasswordAuthentication no/' \
@@ -54,8 +56,11 @@ RUN sed -i /etc/ssh/sshd_config \
 VOLUME "${JENKINS_AGENT_HOME}" "/tmp" "/run" "/var/run"
 WORKDIR "${JENKINS_AGENT_HOME}"
 
-COPY setup-sshd /usr/local/bin/setup-sshd
+COPY setup-ssh-keys /usr/local/bin/setup-ssh-keys
+COPY "*.pub" "${JENKINS_AGENT_HOME}/.ssh"
 
 EXPOSE 22
 
-ENTRYPOINT ["setup-sshd"]
+ENTRYPOINT ["setup-ssh-keys"]
+
+
