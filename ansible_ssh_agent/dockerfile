@@ -62,5 +62,3 @@ COPY "*.pub" "${JENKINS_AGENT_HOME}/.ssh"
 EXPOSE 22
 
 ENTRYPOINT ["setup-ssh-keys"]
-
-
