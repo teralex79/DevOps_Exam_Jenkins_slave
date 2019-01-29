@@ -7,7 +7,9 @@ set -ex
 # or
 #  docker run -e "JENKINS_SLAVE_SSH_PUBKEY=<public key>" jenkinsci/ssh-slave
 
-if [[ ( $(ls .ssh/ | grep .pub | wc -l) ) > 0 ]]; then
+var=( $(ls .ssh/ | grep .pub | wc -l) )
+
+if [[ ${var} -gt 0 ]]; then
 
     mkdir -p "${JENKINS_AGENT_HOME}/.ssh"
     cat ${JENKINS_AGENT_HOME}/.ssh/*.pub > "${JENKINS_AGENT_HOME}/.ssh/authorized_keys"
