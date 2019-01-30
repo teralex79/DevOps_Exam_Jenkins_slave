@@ -59,7 +59,7 @@ RUN set -xe \
 ## install docker
 
 ENV DOCKER_CHANNEL stable
-ENV DOCKER_VERSION 18.09.1
+ENV DOCKER_VERSION 18.06.1-ce
 ENV dockerArch     x86_64
 
 RUN set -xe \
@@ -86,7 +86,9 @@ RUN set -xe \
     && adduser -h "${JENKINS_AGENT_HOME}" -u "${uid}" -G "${group}" -s /bin/bash -D "${user}"\
     && passwd -u jenkins \
     && mkdir ${JENKINS_AGENT_HOME}/.ssh \
-    && chown "${user}":"${group}" /var/run/docker.sock
+    && addgroup docker -g 993\
+    && adduser jenkins docker
+#    && chown "${user}":"${group}" /var/run/docker.sock
 
 # setup SSH server
 RUN set -xe \
