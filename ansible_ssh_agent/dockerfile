@@ -63,13 +63,13 @@ ENV DOCKER_VERSION 18.09.1
 ENV dockerArch     x86_64
 
 RUN set -xe \
-	&& wget -O docker.tgz \
+    && wget -O docker.tgz \
     "https://download.docker.com/linux/static/${DOCKER_CHANNEL}/${dockerArch}/docker-${DOCKER_VERSION}.tgz" \
     \
     && tar --extract --file docker.tgz --strip-components 1 --directory /usr/bin/ \
-	&& rm docker.tgz \
-	&& dockerd --version \
-	&& docker --version
+    && rm docker.tgz \
+    && dockerd --version \
+    && docker --version
 
 ## Add Jenkins user
 ARG user=jenkins
@@ -84,7 +84,9 @@ RUN set -xe \
     && echo "****** Add jenkins user and goupe ******" \
     && addgroup -g ${gid} ${group} \
     && adduser -h "${JENKINS_AGENT_HOME}" -u "${uid}" -G "${group}" -s /bin/bash -D "${user}"\
-    && passwd -u jenkins &&  mkdir ${JENKINS_AGENT_HOME}/.ssh
+    && passwd -u jenkins \
+    && mkdir ${JENKINS_AGENT_HOME}/.ssh \
+    && chown "${user}":"${group}" /var/run/docker.sock
 
 # setup SSH server
 RUN set -xe \
