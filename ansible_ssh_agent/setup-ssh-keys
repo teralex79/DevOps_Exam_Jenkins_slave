@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -xe
 
 # Usage:
 #  docker run jenkinsci/ssh-slave <public key>
