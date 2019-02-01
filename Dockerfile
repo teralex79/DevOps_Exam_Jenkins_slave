@@ -28,9 +28,7 @@ RUN set -xe \
     && echo "****** Install system utilities ******" \
     && apk update \
     && apk add --no-cache --progress \
-        bash wget coreutils tini sudo
-
-#openjdk8 subversion curl git
+        bash wget coreutils tini sudo curl git
 
 ## install ansible
 ENV ANSIBLE_VERSION=2.7.6
@@ -86,8 +84,6 @@ RUN set -xe \
     && mkdir ${JENKINS_AGENT_HOME}/.ssh \
     && addgroup docker -g 993\
     && adduser jenkins docker
-
-#    && chown "${user}":"${group}" /var/run/docker.sock
 
 # setup SSH server
 RUN set -xe \
