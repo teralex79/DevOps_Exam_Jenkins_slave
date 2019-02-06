@@ -91,18 +91,19 @@ RUN set -xe \
     && apk add --no-cache --progress \
         openssh sshpass \
     && sed -i /etc/ssh/sshd_config \
-        -e 's/#PermitRootLogin.*/PermitRootLogin no/' \
         -e 's/#RSAAuthentication.*/RSAAuthentication yes/'  \
         -e 's/#PasswordAuthentication.*/PasswordAuthentication no/' \
         -e 's/#SyslogFacility.*/SyslogFacility AUTH/' \
         -e 's/#LogLevel.*/LogLevel INFO/' \
+        -e 's/#StrictHostKeyChecking.*/StrictHostKeyChecking no/' \
     && mkdir /var/run/sshd
-
+#        -e 's/#PermitRootLogin.*/PermitRootLogin no/' \
+#
 VOLUME "${JENKINS_AGENT_HOME}" "/tmp" "/run" "/var/run"
 WORKDIR "${JENKINS_AGENT_HOME}"
 
 COPY setup-ssh-keys /usr/local/bin/setup-ssh-keys
-COPY "*.pub" "${JENKINS_AGENT_HOME}/.ssh"
+COPY "*.pub" "${JENKINS_AGENT_HOME}/.ssh/"
 
 EXPOSE 22
 
