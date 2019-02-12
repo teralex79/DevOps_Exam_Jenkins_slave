@@ -1,0 +1,24 @@
+version: '3'
+services:
+  jenkins_m:
+    image: jenkins/jenkins:alpine
+    container_name: jenkins_m
+    hostname: jenkins_m
+    volumes:
+      - /home/jenkins:/var/jenkins_home
+    ports:
+      - 8080:8080
+      - 50000:50000
+    links:
+      - jenkins_s
+  jenkins_s:
+    build: .
+    image: teralex79/devops_exam:jenkins_s-1.10
+#    command: "’ssh public key’"
+    container_name: jenkins_s
+    hostname: jenkins_s
+    volumes:
+      - jenkins_vol:/home/jenkins
+volumes:
+  jenkins_vol:
+    external: true
