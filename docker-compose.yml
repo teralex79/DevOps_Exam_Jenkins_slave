@@ -21,4 +21,7 @@ services:
       - jenkins_vol:/home/jenkins
 volumes:
   jenkins_vol:
-    external: true
+#    local:
+#      name:
+#        jenkins_vol
+#    external: true
