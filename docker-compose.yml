@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 services:
   jenkins_m:
     image: jenkins/jenkins:alpine
@@ -18,9 +18,11 @@ services:
     container_name: jenkins_s
     hostname: jenkins_s
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
       - jenkins_vol:/home/jenkins
 volumes:
   jenkins_vol:
+    name: jenkins_vol
 #    local:
 #      name:
 #        jenkins_vol
