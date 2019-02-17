@@ -3,9 +3,12 @@
 set -xe
 
 # Usage:
-#  docker run jenkinsci/ssh-slave <public key>
+# If public keys was added into container
+#  docker run teralex79/devops_exam:jenkins_s-1.10
 # or
-#  docker run -e "JENKINS_SLAVE_SSH_PUBKEY=<public key>" jenkinsci/ssh-slave
+#  docker run teralex79/devops_exam:jenkins_s-1.10 <public key>
+# or
+#  docker run -e "JENKINS_SLAVE_SSH_PUBKEY=<public key>" teralex79/devops_exam:jenkins_s-1.10
 
 var=( $(ls .ssh/ | grep .pub | wc -l) )
 
